@@ -10,7 +10,7 @@ class UserController {
     });
 
     try {
-      await schema.validate();
+      await schema.validate(request.body);
     } catch (error) {
       return response.status(400).json({
         error: error.errors ? error.errors.join('. ') : 'Validation fails.',

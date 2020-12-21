@@ -10,7 +10,7 @@ class Product extends Sequelize.Model {
           primaryKey: true,
         },
         description: Sequelize.STRING,
-        value: Sequelize.STRING,
+        value: Sequelize.FLOAT,
       },
       { sequelize }
     );

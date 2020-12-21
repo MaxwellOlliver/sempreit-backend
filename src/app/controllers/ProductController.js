@@ -63,6 +63,14 @@ class ProductController {
       });
     }
 
+    if (
+      !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
+        id
+      )
+    ) {
+      return response.status(400).json({ error: 'Invalid UUID' });
+    }
+
     const product = await Product.findOne({ where: { id } });
 
     if (!product) {
@@ -78,6 +86,14 @@ class ProductController {
 
   async delete(request, response) {
     const { id } = request.params;
+
+    if (
+      !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
+        id
+      )
+    ) {
+      return response.status(400).json({ error: 'Invalid UUID' });
+    }
 
     const product = await Product.findOne({ where: { id } });
 

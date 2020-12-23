@@ -21,7 +21,10 @@ class UserController {
     const userExists = await User.findOne({ where: { email } });
 
     if (userExists) {
-      return response.status(403).json({ error: 'User already exists.' });
+      return response.status(403).json({
+        error: `User with email ${email} already exists`,
+        field: 'email',
+      });
     }
 
     const user = await User.create({
@@ -33,6 +36,17 @@ class UserController {
     user.password_hash = undefined;
 
     return response.json(user);
+  }
+
+  async show(request, response) {
+    const me = await User.findOne({
+      where: { id: request.userId },
+      attributes: {
+        exclude: ['password_hash'],
+      },
+    });
+
+    return response.json(me);
   }
 }
 

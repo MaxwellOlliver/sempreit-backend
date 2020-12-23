@@ -13,7 +13,7 @@ class UserController {
       await schema.validate(request.body);
     } catch (error) {
       return response.status(400).json({
-        error: error.errors ? error.errors.join('. ') : 'Validation fails.',
+        error: error.errors ? error.errors.join('. ') : 'Validation fails',
       });
     }
 
@@ -21,16 +21,21 @@ class UserController {
     const userExists = await User.findOne({ where: { email } });
 
     if (!userExists) {
-      return response.status(404).json({ error: 'User not found.' });
+      return response.status(404).json({
+        error: `User with email ${email} does not exists`,
+        field: 'email',
+      });
     }
 
     if (!(await userExists.checkPassword(password))) {
-      return response.status(403).json({ error: 'Passwords does not match.' });
+      return response
+        .status(403)
+        .json({ error: 'Passwords does not match', field: 'password' });
     }
 
     return response.json({
       user: userExists,
-      token: jwt.sign(userExists.id, process.env.SECRET),
+      token: jwt.sign({ id: userExists.id }, process.env.SECRET),
     });
   }
 }

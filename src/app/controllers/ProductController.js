@@ -1,3 +1,4 @@
+import { Op } from 'sequelize';
 import * as Yup from 'yup';
 import Product from '../models/Product';
 
@@ -26,8 +27,13 @@ class ProductController {
   }
 
   async index(request, response) {
-    const { page = 1 } = request.query;
+    const { page = 1, q } = request.query;
     const products = await Product.findAll({
+      where: q
+        ? {
+            description: { [Op.iLike]: `${q}%` },
+          }
+        : {},
       limit: 20,
       offset: (page - 1) * 20,
     });

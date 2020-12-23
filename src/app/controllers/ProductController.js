@@ -1,5 +1,6 @@
 import { Op } from 'sequelize';
 import * as Yup from 'yup';
+
 import Product from '../models/Product';
 
 class ProductController {
@@ -29,6 +30,7 @@ class ProductController {
   async index(request, response) {
     const { page = 1, q } = request.query;
     const products = await Product.findAll({
+      order: [['createdAt', 'DESC']],
       where: q
         ? {
             description: { [Op.iLike]: `${q}%` },
@@ -38,13 +40,15 @@ class ProductController {
       offset: (page - 1) * 20,
     });
 
-    const lastRecord = await Product.findAll({
-      order: [['created_at', 'DESC']],
-      limit: 1,
-    });
+    const lastRecord = (
+      await Product.findAll({
+        order: [['createdAt', 'ASC']],
+        limit: 1,
+      })
+    )[0];
 
     const next = products[0]
-      ? products[products.length - 1].id === lastRecord.id
+      ? !(products[products.length - 1].id === lastRecord.id)
       : null;
 
     return response.json({
